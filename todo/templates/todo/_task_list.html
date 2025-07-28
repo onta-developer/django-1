@@ -1,0 +1,13 @@
+<ul>
+    {% for task in tasks %}
+    <li>
+        {% if task.completed %}
+        <s>{{ task.title }}</s>
+        {% else %}
+        {{ task.title }}
+        {% endif %}
+    </li>
+    {% empty %}
+    <li>Belum ada tugas.</li>
+    {% endfor %}
+</ul>
