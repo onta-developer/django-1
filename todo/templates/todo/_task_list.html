@@ -1,13 +1,38 @@
-<ul>
-    {% for task in tasks %}
-    <li>
-        {% if task.completed %}
-        <s>{{ task.title }}</s>
-        {% else %}
-        {{ task.title }}
-        {% endif %}
-    </li>
-    {% empty %}
-    <li>Belum ada tugas.</li>
-    {% endfor %}
+<ul class="space-y-2">
+  <!-- Inject CSRF token agar HTMX bisa baca -->
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />
+
+  {% for task in tasks %}
+  <li
+    class="p-3 rounded border border-gray-300 flex justify-between items-center"
+  >
+    <span class="{% if task.completed %}line-through text-gray-500{% endif %}">
+      {{ task.title }}
+    </span>
+    {% if task.completed %}
+    <span class="text-green-600 text-sm font-semibold">✓ Selesai</span>
+    {% else %}
+    <div class="text-red-600 text-sm flex items-center justify-center w-100">
+      <button
+        class="bg-red-100 rounded px-2 py-1 mr-2"
+        hx-post="{% url 'delete-task' task.id %}"
+        hx-target="#task-list"
+        hx-swap="innerHTML"
+      >
+        🗑️
+      </button>
+      <button
+        class="bg-blue-100 rounded px-2 py-1 mr-2"
+        hx-post="{% url 'completed-task' task.id %}"
+        hx-target="#task-list"
+        hx-swap="innerHTML"
+      >
+        ✔️
+      </button>
+    </div>
+    {% endif %}
+  </li>
+  {% empty %}
+  <li class="text-gray-500">Belum ada tugas.</li>
+  {% endfor %}
 </ul>

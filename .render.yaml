@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: django-todo
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn yadidev.wsgi
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: yadidev.settings
+      - key: PYTHON_VERSION
+        value: 3.11

@@ -1,16 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo App</title>
-</head>
-<body>
-    <h1>Daftar Tugas</h1>
-    <div hx-get="/tasks/" hx-trigger="load, every 1s" hx-swap="innerHTML">
-        <!-- Awalnya kosong, akan diisi HTMX -->
-        Memuat data...
-    </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
-</body>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      document.addEventListener("htmx:configRequest", (event) => {
+        const token = document.querySelector(
+          "[name=csrfmiddlewaretoken]"
+        ).value;
+        event.detail.headers["X-CSRFToken"] = token;
+      });
+    </script>
+
+    <title>Todo App</title>
+  </head>
+  <body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+      <h1 class="text-2xl font-bold mb-4 text-center text-indigo-600">
+        Daftar Tugas
+      </h1>
+      <div class="mb-4">
+        <form hx-post="/add-tasks/" hx-target="#task-list" hx-swap="innerHTML">
+          {% csrf_token %}
+          <div class="flex">
+            <input
+              type="text"
+              name="title"
+              required
+              class="flex-1 p-2 border rounded-l focus:outline-none"
+              placeholder="Tambah tugas baru..."
+            />
+            <button
+              type="submit"
+              class="bg-indigo-600 text-white px-4 rounded-r"
+            >
+              Tambah
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div
+        id="task-list"
+        hx-get="/tasks/"
+        hx-trigger="load, every 5s"
+        hx-swap="innerHTML"
+      >
+        Memuat data...
+      </div>
+    </div>
+  </body>
 </html>
